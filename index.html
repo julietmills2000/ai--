@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 心理健康助手</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 弹幕容器 -->
+        <div id="danmakuContainer" class="danmaku-container"></div>
+
+        <!-- 1. 注册/登录界面 -->
+        <div id="loginView" class="view active">
+            <div class="login-container">
+                <div class="login-header">
+                    <div class="logo">🧠</div>
+                    <h1>AI 心理健康助手</h1>
+                    <p>了解自己，遇见更好的你</p>
+                </div>
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label for="age">年龄</label>
+                        <input type="number" id="age" min="1" max="120" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">性别</label>
+                        <select id="gender" required>
+                            <option value="">请选择</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">地址</label>
+                        <input type="text" id="address" placeholder="例如：北京市" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="occupation">职业</label>
+                        <input type="text" id="occupation" placeholder="例如：学生、工程师" required>
+                    </div>
+                    <button type="submit" class="btn-primary">开始使用</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 2. 版本选择界面（调整到第二步） -->
+        <div id="versionView" class="view">
+            <button class="back-btn" onclick="goBack('login')">← 返回</button>
+            <div class="version-container">
+                <div class="version-header">
+                    <h2>选择评估模式</h2>
+                    <p>根据你的时间选择合适的模式</p>
+                </div>
+                <div class="version-grid">
+                    <button class="version-card" data-version="detailed">
+                        <div class="version-icon">📋</div>
+                        <h3>详细版</h3>
+                        <p>10个问题，深入了解</p>
+                        <span class="version-time">约5-8分钟</span>
+                    </button>
+                    <button class="version-card" data-version="quick">
+                        <div class="version-icon">⚡</div>
+                        <h3>快速版</h3>
+                        <p>3个问题，快速评估</p>
+                        <span class="version-time">约2-3分钟</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 核心问题输入界面（新增） -->
+        <div id="coreQuestionView" class="view">
+            <button class="back-btn" onclick="goBack('version')">← 返回</button>
+            <div class="core-question-container">
+                <div class="core-question-header">
+                    <div class="core-icon">💭</div>
+                    <h2>请描述你的核心问题</h2>
+                    <p>这将帮助我们更好地理解你的需求</p>
+                </div>
+                <div class="core-question-form">
+                    <textarea 
+                        id="coreQuestion" 
+                        placeholder="例如：我最近学习压力很大，经常失眠，不知道如何调整..."
+                        rows="6"
+                    ></textarea>
+                    <button id="submitCoreQuestion" class="btn-primary">下一步</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 选择界面（气泡UI） -->
+        <div id="categoryView" class="view">
+            <button class="back-btn" onclick="goBack('coreQuestion')">← 返回</button>
+            <div class="category-container">
+                <div class="category-header">
+                    <h2>选择咨询方向</h2>
+                    <p>请选择最符合你需求的领域</p>
+                </div>
+                <div class="bubble-container">
+                    <button class="bubble-card" data-category="research">
+                        <div class="bubble-icon">📚</div>
+                        <div class="bubble-text">
+                            <h3>直面研途</h3>
+                            <p>学业压力、科研困惑</p>
+                        </div>
+                    </button>
+                    <button class="bubble-card" data-category="emotion">
+                        <div class="bubble-icon">💝</div>
+                        <div class="bubble-text">
+                            <h3>情感需求</h3>
+                            <p>人际关系、情感困扰</p>
+                        </div>
+                    </button>
+                    <button class="bubble-card" data-category="hobby">
+                        <div class="bubble-icon">🎨</div>
+                        <div class="bubble-text">
+                            <h3>兴趣爱好</h3>
+                            <p>兴趣培养、生活规划</p>
+                        </div>
+                    </button>
+                    <button class="bubble-card" data-category="health">
+                        <div class="bubble-icon">🏃</div>
+                        <div class="bubble-text">
+                            <h3>健康管理</h3>
+                            <p>身心健康、生活习惯</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 问题界面 -->
+        <div id="questionView" class="view">
+            <button class="back-btn" onclick="goBack('category')">← 返回</button>
+            <div class="question-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                    <span class="progress-text" id="progressText">1/10</span>
+                </div>
+                <div class="question-content">
+                    <h2 id="questionTitle" class="question-title"></h2>
+                    <div id="questionOptions" class="question-options">
+                        <!-- 动态生成选项 -->
+                    </div>
+                </div>
+                <!-- 自定义输入区域 -->
+                <div id="customInputArea" class="custom-input-area hidden">
+                    <textarea 
+                        id="customInput" 
+                        placeholder="请输入你的想法..."
+                        rows="4"
+                    ></textarea>
+                    <button id="submitCustomInput" class="btn-primary">提交</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. 结果展示界面 -->
+        <div id="resultView" class="view">
+            <div class="result-container">
+                <div class="result-header">
+                    <div class="result-icon">✨</div>
+                    <h2>AI 分析报告</h2>
+                    <p>基于你的回答生成的个性化建议</p>
+                </div>
+                <div id="loadingSpinner" class="loading-spinner">
+                    <div class="loading-content">
+                        <div class="progress-circle">
+                            <svg width="120" height="120">
+                                <circle cx="60" cy="60" r="54" />
+                                <circle cx="60" cy="60" r="54" id="progressCircle" />
+                            </svg>
+                            <span id="progressPercent">0%</span>
+                        </div>
+                        <p class="loading-text">AI 正在分析你的回答...</p>
+                        <p class="loading-detail" id="loadingDetail">正在整理信息</p>
+                    </div>
+                </div>
+                <div id="resultContent" class="result-content hidden">
+                    <div class="result-section">
+                        <h3>📊 基本信息</h3>
+                        <div id="userInfoSummary"></div>
+                    </div>
+                    <div class="result-section">
+                        <h3>💭 核心问题</h3>
+                        <div id="coreQuestionSummary" class="core-summary"></div>
+                    </div>
+                    <div class="result-section">
+                        <h3>💡 AI 建议</h3>
+                        <div id="aiSuggestion" class="ai-suggestion"></div>
+                    </div>
+                    <div class="result-actions">
+                        <button id="restartBtn" class="btn-secondary">重新开始</button>
+                        <button id="downloadBtn" class="btn-primary">下载报告</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
